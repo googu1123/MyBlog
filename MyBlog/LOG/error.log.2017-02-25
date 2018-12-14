@@ -1,0 +1,2 @@
+2017-02-25 12:13:12,665 ERROR [DefaultHandshakeHandler] Handshake failed due to invalid Upgrade header: null []
+2017-02-25 12:13:20,596 ERROR [DefaultHandshakeHandler] Handshake failed due to invalid Upgrade header: null []

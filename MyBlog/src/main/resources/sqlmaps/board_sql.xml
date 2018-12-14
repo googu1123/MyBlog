@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myblog.board">
+    
+    <select id="getBoardListTotalCount" parameterType="hashmap" resultType="int">
+        select
+            count(*)
+        from
+            tb_board
+        where 1=1
+        <if test="category !='' ">
+		    and category = #{category}
+		</if>
+    </select>
+     
+    <select id="getBoardList" parameterType="hashmap" resultType="hashmap">
+        select
+            seq,
+            userid,
+            category, 
+            username,
+            title,
+            contents,
+            filename,
+            regdate,
+            readcnt,
+            replycnt
+        from
+            tb_board
+        where 1=1
+        <if test="category !='' ">
+		    and category = #{category}
+		</if>
+        order by 
+        	seq DESC
+        limit #{startNo}, #{endNo}
+    </select>
+    
+    <select id="getBoardRecentList" parameterType="hashmap" resultType="hashmap">
+        select
+            seq,
+            userid,
+            category, 
+            username,
+            title,
+            contents,
+            filename,
+            regdate,
+            readcnt,
+            replycnt
+        from
+            tb_board
+        order by 
+        	seq DESC
+        limit 0, 5
+    </select>
+    
+    <select id="getBoardView" parameterType="hashmap" resultType="hashmap">
+        select
+            seq,
+            userid,
+            category, 
+            username,
+            title,
+            contents,
+            filename,
+            regdate,
+            readcnt,
+            replycnt,
+           (select codename from tb_category where seq = a.category) as codename
+        from
+            tb_board a
+        where seq = #{seq}
+    </select>
+    
+    <update id="boardUpdateReadCnt" parameterType="hashmap">
+    	update tb_board set readcnt = readcnt+1 where seq =#{seq}
+    </update>
+    
+    <insert id="boardInsert" parameterType="hashmap">
+    	insert into tb_board
+    		(userid, username, title, category, contents, filename, regdate, readcnt, replycnt) 
+    	value 
+    		(#{userid}, #{username}, #{title}, #{category}, #{contents}, #{filename}, now(), 0, 0)
+    </insert> 
+    
+    <insert id="boardDelete" parameterType="hashmap">
+    	delete from tb_board where seq = #{seq}
+    </insert> 
+    
+    <select id="getCategoryList" parameterType="hashmap" resultType="hashmap">
+        select
+            seq, codename, sortnum
+			, (select count(seq) from tb_board where category = a.seq) as cnt 
+        from
+            tb_category a
+        order by 
+        	sortnum
+    </select>
+    
+    
+</mapper>

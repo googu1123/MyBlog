@@ -1,0 +1,115 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@include file="../common/common.jsp" %>
+<!DOCTYPE HTML>
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>${TITLE_TEXT}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<style>
+		.contents
+		{
+			diyplay:none;
+		}
+		
+		textarea.autosize {height: 30px; }
+		
+		</style>
+	</head>
+
+	<body>
+
+		<!-- Content -->
+			<div id="content">
+				<div class="inner">
+				<article class="box post post-excerpt">
+					<form id="requestform" name="requestform" method="post">
+					<table class="default_1">
+						<tr>
+							<td colspan="2" align="center">Chat Board</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><textarea id="messageText" name="messageText" class="autosize" cols="45" onkeydown="resize(this)" onkeyup="resize(this)" placeholder="내용을 입력해주세요."></textarea></td>
+							<td><a class="button next" id="btn_send">Send</a></td>
+						</tr>
+					</table>
+					</form>
+				</article>
+					
+				<div class="footer_btn">
+					<a class="button next" id="btn_list">LIST</a>
+				</div>
+				<div id="qr_img"></div>
+				</div>
+			</div>
+
+		<!-- Sidebar -->
+			<%-- <jsp:include page="/viewPage.do?pageName=sidebar" flush="false" ></jsp:include> --%>
+			<%@include file="../board/sidebar.jsp" %>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			
+			<script type="text/javascript">
+			$(document).ready(function() {
+								
+				$('#btn_list').click(function() {
+					document.location.href="boardList.do";
+				});
+				
+				$('#btn_send').click(function() {
+					sendMessage();
+				});
+				
+			});
+			
+			var url = "192.168.137.14:8080";
+			
+			//웹소켓 초기화
+	        var webSocket = new WebSocket("ws://"+url+"/broadsocket");
+	        var messageTextArea = document.getElementById("messageTextArea");
+	        
+	        //메시지가 오면 messageTextArea요소에 메시지를 추가한다.
+	        webSocket.onmessage = function processMessge(message){
+	            //Json 풀기
+	            /* var jsonData = JSON.parse(message.data);
+	            if(jsonData.message != null) {
+	                messageTextArea.value += jsonData.message + "\n"
+	            }; */
+	            
+	        	//messageTextArea.value = messageTextArea.value + message.data + "\n"
+	        	messageTextArea.append(message.data + "\n");
+	        	messageTextArea2.append(message.data + "\n");
+	        }
+	        
+	        //메시지 보내기
+	        function sendMessage(){
+	            var messageText = document.getElementById("messageText");
+	            webSocket.send(messageText.value);
+	            messageText.value = "";
+	        }
+			
+			function resize(obj){
+				obj.style.height = "1px";
+				obj.style.height = (15+obj.scrollHeight)+"px";
+			}
+		</script>
+	</body>
+</html>
