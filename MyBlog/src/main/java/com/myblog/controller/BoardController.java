@@ -40,7 +40,9 @@ public class BoardController
     		HttpServletRequest request, 
     		HttpServletResponse response)
     {
+    	
     	log.info(">>>>>>>> boardList");
+    	
     	
     	//모바일 접속 여부 체크
     	request.getSession(true).setAttribute("isMobile",CommonUtil.isMobile(request));
